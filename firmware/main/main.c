@@ -66,6 +66,7 @@ void app_main(void)
 {
     printf("AudioRelay ESP32 starting...\n");
     InitLED(); // Initialise first so the LED can signal any fatal errors below
+    InitLEDIntegrity(); // Initialize the LED integrity library and configure the DO pin for rising-edge sensing
     if (!ConfigDMA()) {
         // I2S init failed — flash magenta and abort. Watchdog will reboot the device.
         printf("Fatal: I2S init failed\n");

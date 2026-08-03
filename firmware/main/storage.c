@@ -175,6 +175,13 @@ void WriteToSD(void *pvParameters)
 
     for (;;)
     {
+        // Stop writing permanently once LED tamper is detected
+        if (atomic_load(&tamperDetected)) {
+            esp_task_wdt_reset();
+            vTaskDelay(pdMS_TO_TICKS(500));
+            continue;
+        }
+
         //Generate a unique file name using timestamp
         GetTimestamp(timestamp, sizeof(timestamp));
         snprintf(fileName, sizeof(fileName), "/sdcard/audio_%s_%04d.raw", timestamp, fileCount);

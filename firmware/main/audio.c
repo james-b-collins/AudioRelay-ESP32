@@ -60,6 +60,13 @@ void ReadAudioInput(void* pvParameters) {
     int32_t buffer[1024]; // Buffer to hold raw data
     size_t bytesRead;     // Variable to hold the number of bytes read from the I2S channel
     for(;;) {
+        // Stop capturing if led tampering is detected
+        if (atomic_load(&tamperDetected)) {
+            esp_task_wdt_reset();
+            vTaskDelay(pdMS_TO_TICKS(500));
+            continue;
+        }
+
         i2s_channel_read(rxChannel, buffer, sizeof(buffer), &bytesRead, portMAX_DELAY);
 
         // Notify the watchdog that task is still alive

@@ -70,7 +70,7 @@ All pin definitions are in `main/config.h` and can be changed to match your wiri
 | Blue / Yellow flashing | Rewind hold warning |
 | Green (1s) | Rewind confirmed |
 | Orange flashing | SD card full, waiting for space |
-| Magenta flashing | Fatal error (I2S init failed) |
+| Magenta flashing | Fatal error (I2S init failed) or LED tamper detected |
 
 ## Configuration
 
@@ -110,6 +110,22 @@ To open a file in [Audacity](https://www.audacityteam.org/):
 3. Byte order: **Little-endian**
 4. Channels: **1 (Mono)**
 5. Sample rate: **16000 Hz**
+
+## LED Integrity
+The [LED-Integrity](https://github.com/james-b-collins/led-integrity) library is supported as a way to ensure the LED has not been removed or tampered with. You can enable and configure this library in the config.h file. The defaults are already configured for a WS2812B LED. Enabling this setting will cause the device to immediately stop recording and uploading audio until restarted.
+```C
+// LED tamper detection (led-integrity library). 1 to enable, 0 to disable
+#define LED_INTEGRITY_ENABLED 0
+
+#if LED_INTEGRITY_ENABLED
+#define LED_DO_PIN                       GPIO_NUM_22
+#define LED_INTEGRITY_PROBE_WINDOW_US    10000      // Time before timeout on the DO line after a probe frame is sent (us)
+#define LED_INTEGRITY_MAX_MISSED_PROBES  3          // number of consecutive missed probes before tamper is latched
+#define LED_INTEGRITY_PROBE_INTERVAL_MS  10000      // Time between probes (ms)
+#define LI_PROP_DELAY_MIN                10         // Minimum valid delay after sending a probe frame (us)
+#define LI_PROP_DELAY_MAX                100        // Maximum valid delay after sending a probe frame (us)
+#endif
+```
 
 ## Build & Flash
 

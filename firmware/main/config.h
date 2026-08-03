@@ -51,6 +51,18 @@
 // Defines the bitshift to apply to the LED color values to achieve the desired brightness (0 = full brightness, 1 = half brightness, etc.)
 #define LED_BRIGHTNESS_SHIFT 4 // 1/16 brightness
 
+// LED tamper detection (led-integrity library). 1 to enable, 0 to disable
+#define LED_INTEGRITY_ENABLED 0
+
+#if LED_INTEGRITY_ENABLED
+#define LED_DO_PIN                       GPIO_NUM_22
+#define LED_INTEGRITY_PROBE_WINDOW_US    10000      // Time before timeout on the DO line after a probe frame is sent (us)
+#define LED_INTEGRITY_MAX_MISSED_PROBES  3          // number of consecutive missed probes before tamper is latched
+#define LED_INTEGRITY_PROBE_INTERVAL_MS  10000      // Time between probes (ms)
+#define LI_PROP_DELAY_MIN                10         // Minimum valid delay after sending a probe frame (us)
+#define LI_PROP_DELAY_MAX                100        // Maximum valid delay after sending a probe frame (us)
+#endif
+
 
 
 // SD card pin definitions

@@ -43,6 +43,11 @@ void InitButton() {
 // Task to monitor the rewind button and delete the last 2 minutes of audio when held for 3 seconds.
 void RewindButtonTask(void *pvParameters) {
     for (;;) {
+        // Ignore buttons once LED tamper is detected.
+        if (atomic_load(&tamperDetected)) {
+            vTaskDelay(pdMS_TO_TICKS(200));
+            continue;
+        }
         // Wait for button press
         if (gpio_get_level(REWIND_BUTTON_PIN) == 0) {
             int elapsed = 0;
@@ -84,6 +89,11 @@ void RewindButtonTask(void *pvParameters) {
 // Task to monitor the stop button. Pauses recording and deletes any file currently being written.
 void StopButtonTask(void *pvParameters) {
     for (;;) {
+        // Ignore buttons once LED tamper is detected.
+        if (atomic_load(&tamperDetected)) {
+            vTaskDelay(pdMS_TO_TICKS(200));
+            continue;
+        }
         if (gpio_get_level(STOP_BUTTON_PIN) == 0 && recordingActive) {
             vTaskDelay(pdMS_TO_TICKS(BUTTON_POLL_MS)); // Debounce
             if (gpio_get_level(STOP_BUTTON_PIN) == 0) {
@@ -124,6 +134,11 @@ void StopButtonTask(void *pvParameters) {
 // Task to monitor the start button. Resumes recording after it has been paused.
 void StartButtonTask(void *pvParameters) {
     for (;;) {
+        // Ignore buttons once LED tamper is detected.
+        if (atomic_load(&tamperDetected)) {
+            vTaskDelay(pdMS_TO_TICKS(200));
+            continue;
+        }
         if (gpio_get_level(START_BUTTON_PIN) == 0 && !recordingActive) {
             vTaskDelay(pdMS_TO_TICKS(BUTTON_POLL_MS)); // Debounce
             if (gpio_get_level(START_BUTTON_PIN) == 0) {

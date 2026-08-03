@@ -16,6 +16,7 @@
 #include "config.h"
 #include "networking.h"
 #include "storage.h"
+#include "led.h"
 
 // Flag set during the backoff window to prevent the event handler from reconnecting
 static atomic_bool wifiBackoffActive = false;
@@ -90,6 +91,12 @@ void StreamToServer(void* pvParameters) {
     int consecutiveFailures = 0;//Counter for consecutive upload failures
 
     for(;;) {
+        // Stop uploading once LED tamper is detected
+        if (atomic_load(&tamperDetected)) {
+            vTaskDelay(pdMS_TO_TICKS(1000));
+            continue;
+        }
+
         //wait for wifi connection
         xEventGroupWaitBits(wifiEventGroup, WIFI_CONNECTED_BIT, false, true, portMAX_DELAY);
 

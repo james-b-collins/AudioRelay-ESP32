@@ -7,3 +7,4 @@ firmware/main/secrets.h
 firmware/build/
 firmware/sdkconfig
 firmware/sdkconfig.old
+/build
